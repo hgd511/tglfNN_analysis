@@ -287,14 +287,15 @@ for i in [7]:
 	tglf_directory = '/home/hdudding/work/PostDoc/DTP/tglfNN_project/tglf_standalone/GA_std_dgscan/' + str(i) + '/'
 	kys, eigen_dat = get_growth_rates_and_frequencies(tglf_directory)
 	
+	#plt.plot(kys, eigen_dat[:, 0]) # electron mode growth rate
+	#plt.plot(kys, eigen_dat[:, 2]) # ion mode growth rate
+	#plt.show()
 	
-	
-	all_flux_info = get_TGLF_weight_info(tglf_directory)
+	all_weight_info = get_TGLF_weight_info(tglf_directory)
 	NKY, NFIELDS, NMODES, NSPECIES = get_tglf_run_info(tglf_directory)
 	for mod in range(2):
 		for spec in range(2):
-			plt.plot(kys, all_flux_info[mod, spec, 1])
+			plt.plot(kys, all_weight_info[mod, spec, 1])
 			plt.plot(kys, get_weights(tglf_directory, NKY, spec, 0, mod, NFIELDS, NMODES)[:,1], linestyle = '--')
-			print(all_flux_info[mod, spec, 1])
 		plt.show()
 
