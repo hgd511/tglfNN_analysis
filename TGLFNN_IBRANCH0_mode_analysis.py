@@ -67,9 +67,9 @@ def get_fluxes(tglf_directory, NKY, species, field, NFIELDS):
 		count = 0
 		for line in infile:
 			count = count + 1
-			if count< (3 + (NFIELDS * species + field) * (3 + NKY - 1)):
+			if count< (3 + (NFIELDS * species + field) * (3 + 2 * NKY - 1)):
 				continue
-			if count> ((NFIELDS * species + field + 1) * (3 + NKY - 1)):
+			if count> ((NFIELDS * species + field + 1) * (3 + 2 * NKY - 1)):
 				continue
 			strdat = strdat + line.split()
 
@@ -113,11 +113,11 @@ def get_weights(tglf_directory, NKY, species, field, mode, NFIELDS, NMODES):
 		count = 0
 		for line in infile:
 			count = count + 1
-			start = (7 + NKY * (NFIELDS * NMODES * species + NMODES * field + mode) + 
+			start = (7 + 2 * NKY * (NFIELDS * NMODES * species + NMODES * field + mode) + 
 					(mode + (NMODES + 1) * field + NFIELDS * (NMODES + 1) * species))
 			if count< start:
 				continue
-			if count> (start + NKY - 1):
+			if count> (start + 2 * NKY - 1):
 				continue
 			strdat = strdat + line.split()
 	# Number of columns in the reshaped data array:
@@ -150,7 +150,7 @@ def get_field_spec(tglf_directory, NKY, NMODES, mode):
 
 	# Convert strings into float array and reshape:
 	data = convert_string_list_to_float_array(strdat, ncol)
-	data = data[mode: mode + (NKY) * NMODES :NMODES]
+	data = data[mode: mode + NKY * NMODES :NMODES]
 	return data
 
 
@@ -287,14 +287,18 @@ for i in [7]:
 	tglf_directory = '/home/hdudding/work/PostDoc/DTP/tglfNN_project/tglf_standalone/GA_std_dgscan/' + str(i) + '/'
 	kys, eigen_dat = get_growth_rates_and_frequencies(tglf_directory)
 	
-	#plt.plot(kys, eigen_dat[:, 0]) # electron mode growth rate
-	#plt.plot(kys, eigen_dat[:, 2]) # ion mode growth rate
-	#plt.show()
+	test_function(tglf_directory)
+	
+	plt.plot(kys, eigen_dat[:, 0]) # electron mode growth rate
+	plt.plot(kys, eigen_dat[:, 2]) # ion mode growth rate
+	plt.show()
 	
 	all_weight_info = get_TGLF_weight_info(tglf_directory)
 	NKY, NFIELDS, NMODES, NSPECIES = get_tglf_run_info(tglf_directory)
 	for mod in range(2):
 		for spec in range(2):
+			plt.plot(kys, get_fluxes(tglf_directory, NKY, spec, 0, NFIELDS))
+			plt.plot(kys, get_field_spec(tglf_directory, NKY, NMODES, mod))
 			plt.plot(kys, all_weight_info[mod, spec, 1])
 			plt.plot(kys, get_weights(tglf_directory, NKY, spec, 0, mod, NFIELDS, NMODES)[:,1], linestyle = '--')
 		plt.show()
